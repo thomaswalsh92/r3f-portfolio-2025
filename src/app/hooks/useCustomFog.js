@@ -120,49 +120,55 @@ float FBM(vec3 p) {
 
 export const useCustomFog = () => {
   //!editing ShaderChunks directly here, CHORE - tidy these up into folders
-  THREE.ShaderChunk.fog_fragment = /*glsl*/ `
+  THREE.ShaderChunk.fog_fragment = /* glsl */ `
   #ifdef USE_FOG
+  
     vec3 fogOrigin = cameraPosition;
     vec3 fogDirection = normalize(vWorldPosition - fogOrigin);
     float fogDepth = distance(vWorldPosition, fogOrigin);
 
-    // f(p) = fbm( p + fbm( p ) )
-    vec3 noiseSampleCoord = vWorldPosition * 0.00025 + vec3(
-        0.0, 0.0, fogTime * 0.025);
-    float noiseSample = FBM(noiseSampleCoord + FBM(noiseSampleCoord)) * 0.5 + 0.5;
-    fogDepth *= mix(noiseSample, 1.0, saturate((fogDepth - 5000.0) / 5000.0));
-    fogDepth *= fogDepth;
-
-    float heightFactor = 0.05;
+    float heightFactor = 0.03;
     float fogFactor = heightFactor * exp(-fogOrigin.y * fogDensity) * (
-        1.0 - exp(-fogDepth * fogDirection.y * fogDensity)) / fogDirection.y;
+      1.0 - exp(-fogDepth * fogDirection.y * fogDensity)) / fogDirection.y;
     fogFactor = saturate(fogFactor);
-
     gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
-  #endif`;
+  
+  #endif
+  `;
 
-  THREE.ShaderChunk.fog_pars_fragment =
-    _NOISE_GLSL +
-    /*glsl*/ `
+  THREE.ShaderChunk.fog_pars_fragment = /* glsl */ `
   #ifdef USE_FOG
-    uniform float fogTime;
+  
     uniform vec3 fogColor;
     varying vec3 vWorldPosition;
+    varying float vFogDepth;
+  
     #ifdef FOG_EXP2
       uniform float fogDensity;
+  
     #else
+  
       uniform float fogNear;
       uniform float fogFar;
+  
     #endif
-  #endif`;
+  
+  #endif
+  `;
 
-  THREE.ShaderChunk.fog_vertex = /*glsl*/ `
+  THREE.ShaderChunk.fog_vertex = /* glsl */ `
   #ifdef USE_FOG
+    vec4 worldPosition = modelMatrix * vec4(position, 1.0); 
     vWorldPosition = worldPosition.xyz;
-  #endif`;
+    vFogDepth = - mvPosition.z;
+  #endif
+  `;
 
-  THREE.ShaderChunk.fog_pars_vertex = /*glsl*/ `
+  THREE.ShaderChunk.fog_pars_vertex = /* glsl */ `
   #ifdef USE_FOG
     varying vec3 vWorldPosition;
-  #endif`;
+    varying float vFogDepth;
+  
+  #endif
+  `;
 };
