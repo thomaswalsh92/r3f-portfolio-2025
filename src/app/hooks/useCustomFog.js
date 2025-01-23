@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-const _NOISE_GLSL = `
+const _NOISE_GLSL = /* glsl */ `
 //
 // Description : Array and textureless GLSL 2D/3D/4D simplex
 //               noise functions.
@@ -127,7 +127,12 @@ export const useCustomFog = () => {
     vec3 fogDirection = normalize(vWorldPosition - fogOrigin);
     float fogDepth = distance(vWorldPosition, fogOrigin);
 
-    float heightFactor = 0.03;
+    vec3 noiseSampleCoord = vWorldPosition * 0.01;
+    float noiseSample = FBM(noiseSampleCoord + FBM(noiseSampleCoord)) * 0.5 + 0.5; 
+    fogDepth *= noiseSample * 0.4;
+    // fogDepth = fogDepth * (mix(noiseSample, 1.0, saturate((fogDepth))) * fogDepth * 0.33);
+
+    float heightFactor = 0.33;
     float fogFactor = heightFactor * exp(-fogOrigin.y * fogDensity) * (
       1.0 - exp(-fogDepth * fogDirection.y * fogDensity)) / fogDirection.y;
     fogFactor = saturate(fogFactor);
@@ -136,25 +141,20 @@ export const useCustomFog = () => {
   #endif
   `;
 
-  THREE.ShaderChunk.fog_pars_fragment = /* glsl */ `
-  #ifdef USE_FOG
-  
-    uniform vec3 fogColor;
-    varying vec3 vWorldPosition;
-    varying float vFogDepth;
-  
-    #ifdef FOG_EXP2
-      uniform float fogDensity;
-  
-    #else
-  
-      uniform float fogNear;
-      uniform float fogFar;
-  
-    #endif
-  
-  #endif
-  `;
+  THREE.ShaderChunk.fog_pars_fragment =
+    _NOISE_GLSL +
+    /*glsl*/ `
+    #ifdef USE_FOG
+      uniform float fogTime;
+      uniform vec3 fogColor;
+      varying vec3 vWorldPosition;
+      #ifdef FOG_EXP2
+        uniform float fogDensity;
+      #else
+        uniform float fogNear;
+        uniform float fogFar;
+      #endif
+    #endif`;
 
   THREE.ShaderChunk.fog_vertex = /* glsl */ `
   #ifdef USE_FOG
@@ -171,4 +171,8 @@ export const useCustomFog = () => {
   
   #endif
   `;
+};
+
+export const useCustomFogTime = () => {
+  console.log(THREE);
 };

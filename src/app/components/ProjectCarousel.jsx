@@ -27,26 +27,26 @@ const projects = [
   { name: "Project 8", tags: ["GRAPHIC", "3D"] },
 ];
 
-const ProjectCarousel = ({ scene }) => {
+const ProjectCarousel = ({ positionOffset }) => {
   let maxRadius = 5;
 
   return projects.map((project, index) => {
     let i = index + 1;
-    let angle = i * ((2 * Math.PI) / projects.length);
-    console.log("x: ", Math.cos(angle));
-    console.log("y: ", Math.cos(angle));
+    let angle = i * (Math.PI / projects.length);
+    console.log(angle);
     let x = maxRadius * Math.cos(angle);
     let y = maxRadius * Math.sin(angle);
-    console.log("angle: ", angle);
-    // console.log("x: ", x);
-    // console.log("y: ", y);
     return (
       <mesh
         key={project.name}
-        position={[x, -0.5, y - 10]}
+        position={[
+          x + positionOffset[0],
+          -0.5 + positionOffset[1],
+          y - 10 + positionOffset[2],
+        ]}
         rotation-y={angle + Math.PI / 2}
       >
-        <boxGeometry args={[2, 5, 0.1]} />
+        <boxGeometry args={[2, 3.5, 0.1]} />
         <meshStandardMaterial color="blue" />
       </mesh>
     );
