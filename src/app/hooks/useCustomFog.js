@@ -119,6 +119,7 @@ float FBM(vec3 p) {
 `;
 
 export const useCustomFog = () => {
+  console.log(THREE.ShaderChunk.fog_fragment);
   //!editing ShaderChunks directly here, CHORE - tidy these up into folders
   THREE.ShaderChunk.fog_fragment = /* glsl */ `
   #ifdef USE_FOG
