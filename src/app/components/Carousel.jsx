@@ -31,10 +31,6 @@ const projects = [
 ];
 
 const Carousel = () => {
-  const { width } = useThree((state) => state.viewport);
-  useFrame(() => {
-    console.log(width);
-  });
   return projects.map((project, i) => {
     return (
       <CarouselItem
