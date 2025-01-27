@@ -28,17 +28,27 @@ const projects = [
   },
   { name: "Project 7", tags: ["GRAPHIC"] },
   { name: "Project 8", tags: ["GRAPHIC", "3D"] },
+  { name: "Project 9", tags: ["GRAPHIC", "WEB"] },
 ];
 
-const Carousel = () => {
+const Carousel = ({ width, height }) => {
+  const xGap = 0.3;
+  const xScale = 6;
+  const yScale = 9;
+  const xTotal = xGap + xScale;
+  const xRange = xTotal * projects.length;
+  const rangeOffset = xRange / 2;
+
   return projects.map((project, i) => {
+    const xPos = (xRange / projects.length) * (i + 1) - rangeOffset;
+    console.log(xPos);
     return (
       <CarouselItem
         key={project.name + i}
         name={project.name}
         tags={project.tags}
-        scale={[3, 2]}
-        position={[i, 0, 0]}
+        scale={[xScale, yScale]}
+        position={[xPos, 0, 0]}
       />
     );
   });
