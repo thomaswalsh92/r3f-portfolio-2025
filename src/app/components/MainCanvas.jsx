@@ -19,7 +19,7 @@ export const MainCanvas = () => {
         // ref={ref}
         shadows
         // dpr={[1, 2]}
-        camera={{ fov: 15, position: [0, 0, 4], near: 1, far: 5000 }}
+        // camera={{ fov: 10, position: [0, 0, 0] }}
       >
         <Scene />
       </Canvas>
@@ -28,21 +28,24 @@ export const MainCanvas = () => {
 };
 
 const Scene = () => {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
   const scene = useThree((s) => s.scene);
+  const { width, height } = useThree((state) => state.viewport);
 
   return (
-    <mesh receiveShadow position={[0, 0, -100]}>
-      <planeGeometry args={[70, 40]} />
-      <shaderMaterial
-        vertexShader={vertex}
-        fragmentShader={fragment}
-        // uniforms={uniforms.current}
-        // transparent={true}
-        // wireframe={true}
-      />
-      <Carousel width={width} height={height} />
-    </mesh>
+    <>
+      <mesh receiveShadow position={[0, 0, 0]}>
+        <planeGeometry args={[width, height]} />
+        <shaderMaterial
+          vertexShader={vertex}
+          fragmentShader={fragment}
+          // uniforms={uniforms.current}
+          // transparent={true}
+          // wireframe={true}
+        />
+      </mesh>
+      <Carousel />
+    </>
   );
 };

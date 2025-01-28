@@ -13,8 +13,8 @@ void main() {
 export const fragment = /*glsl*/ `
 varying vec2 vUv;
 void main() {
-    vec4 red = vec4(0.219, 0.231, 0.325, 1.0);
-    gl_FragColor = red;
+    vec4 bgColor = vec4(0.121, 0.121, 0.125, 1.0);
+    gl_FragColor = bgColor;
     // gl_FragColor = vec4(1., 0., 0., 1.);
 }
 `;
