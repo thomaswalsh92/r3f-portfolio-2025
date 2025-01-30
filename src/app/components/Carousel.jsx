@@ -39,12 +39,11 @@ const Carousel = () => {
   const xTotal = xGap + xScale;
 
   const { width } = useThree((state) => state.viewport);
-  console.log("width: ", width);
 
-  //todo We need to get the total width of the viewport and array the items across that
   return (
     <>
       <ScrollControls
+        infinite
         horizontal
         pages={(width - xTotal + projects.length * xTotal) / width}
       >
@@ -53,11 +52,12 @@ const Carousel = () => {
             return (
               <CarouselItem
                 key={project.name + i}
-                name={project.name}
-                tags={project.tags}
+                // name={project.name}
+                // tags={project.tags}
                 scale={[xScale, yScale]}
                 position={[i * xTotal, 0, 0]}
                 index={i}
+                numberOfProjects={projects.length}
               />
             );
           })}
