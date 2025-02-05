@@ -13,6 +13,9 @@
     --foreground: #ededed;
   }
 }
+html {
+  font-size: 12px;
+}
 
 body {
   color: var(--foreground);
@@ -21,13 +24,86 @@ body {
   overscroll-behavior: contain;
 }
 
+h1 {
+  font-size: 1.875rem;
+  line-height: 1.875rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+  line-height: 1.25rem;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 }
 
-.overlay {
-  position: fixed;
+/* TOP */
+
+.overlay-top {
+  width: 100%;
+  height: 100%;
+  position: relative;
   z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.header {
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.tom {
+  padding-bottom: 0.5rem;
+}
+
+.nav {
+  /* margin-left: auto; */
+  padding-top: 2.375rem;
+  display: flex;
+}
+
+.nav-item {
+  margin-left: 1rem;
+}
+
+.header-rule {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+/* BOTTOM */
+
+.footer-rule {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+.overlay-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.footer {
+  margin-top: auto;
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.social-links {
+  display: flex;
+  padding-bottom: 2.375rem;
+}
+
+.social-links-item {
+  margin-right: 1rem;
 }
