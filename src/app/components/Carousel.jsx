@@ -33,11 +33,10 @@ const projects = [
 ];
 
 const Carousel = () => {
-  const xGap = 0.04;
-  const xScale = 0.8;
-  const yScale = 1.2;
+  const xGap = 0.09;
+  const xScale = 1.8;
+  const yScale = 2;
   const xTotal = xGap + xScale;
-
   const { width } = useThree((state) => state.viewport);
 
   return (

@@ -13,7 +13,12 @@ const CarouselItem = ({ position, scale, index, numberOfProjects }) => {
       index / numberOfProjects - 1.5 / numberOfProjects,
       4 / numberOfProjects
     );
-    easing.damp3(ref.current.scale, [scale[0], scale[1] + y, 0.2], 0.15, delta);
+    easing.damp3(
+      ref.current.scale,
+      [scale[0], scale[1] + y * 0.5, 0.2],
+      0.15,
+      delta
+    );
   });
   return (
     <Image ref={ref} url="/orb-1.png" position={position} scale={scale}></Image>
