@@ -43,7 +43,6 @@ const Carousel = () => {
   return (
     <>
       <ScrollControls
-        infinite
         horizontal
         pages={(width - xTotal + projects.length * xTotal) / width}
       >
