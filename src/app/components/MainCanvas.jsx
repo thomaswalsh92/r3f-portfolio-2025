@@ -1,10 +1,10 @@
 "use client";
-import { Canvas, MeshStandardMaterial } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import { useRef } from "react";
-import { degToRad } from "three/src/math/MathUtils";
 import { vertex, fragment } from "../shaders/shader";
 import Carousel from "../components/Carousel";
-import { useThree } from "@react-three/fiber";
+import { useThree, useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 // import { Items } from "../components/Example";
 // import { useCustomFog } from "../hooks/useCustomFog";
 
@@ -32,6 +32,14 @@ const Scene = () => {
   const windowHeight = window.innerHeight;
   const scene = useThree((s) => s.scene);
   const { width, height } = useThree((state) => state.viewport);
+  const clock = new THREE.Clock();
+  const uniforms = {
+    uTime: { value: 0.0 },
+  };
+
+  useFrame(() => {
+    uniforms.uTime.value = clock.getElapsedTime() / 10;
+  });
 
   return (
     <>
@@ -40,6 +48,8 @@ const Scene = () => {
         <shaderMaterial
           vertexShader={vertex}
           fragmentShader={fragment}
+          uniforms={uniforms}
+          dithering={true}
           // uniforms={uniforms.current}
           // transparent={true}
           // wireframe={true}
