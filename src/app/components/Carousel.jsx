@@ -1,6 +1,15 @@
+import { useState, useRef } from "react";
 import { ScrollControls, Scroll } from "@react-three/drei";
 import CarouselItem from "./CarouselItem";
 import { useFrame, useThree } from "@react-three/fiber";
+// import {
+//   animate,
+//   motion,
+//   MotionValue,
+//   useMotionValue,
+//   useMotionValueEvent,
+//   useScroll,
+// } from "motion/react";
 
 const projects = [
   {
@@ -33,27 +42,42 @@ const projects = [
 ];
 
 const Carousel = () => {
-  const xGap = 0.09;
-  const xScale = 1.8;
-  const yScale = 2;
-  const xTotal = xGap + xScale;
+  const xGap = 0.05;
+  const collapsedScaleX = 0.5;
+  const collapsedScaleY = 3;
+  const expandedScaleX = 4;
+  const expandedScaleY = 5.4;
+  const collapsedTotalX = xGap + collapsedScaleX;
+  const expandedTotalX = xGap + expandedScaleX;
   const { width } = useThree((state) => state.viewport);
+  const [focusedItem, setFocusedItem] = useState(0);
 
+  //first thing we wanna do is make the carousel endless with a central reference position. Endless scroll could be used to cycle the unfocused
+  //carousel items around
+
+  //
   return (
     <>
       <ScrollControls
         horizontal
-        pages={(width - xTotal + projects.length * xTotal) / width}
+        pages={
+          (width - collapsedTotalX + projects.length * collapsedTotalX) / width
+        }
       >
         <Scroll>
           {projects.map((project, i) => {
             return (
               <CarouselItem
                 key={project.name + i}
+                focusedItem={focusedItem}
+                setFocusedItem={(index) => setFocusedItem(index)}
+                xGap={xGap}
+                collapsedScale={[collapsedScaleX, collapsedScaleY]}
+                expandedScale={[expandedScaleX, expandedScaleY]}
                 // name={project.name}
                 // tags={project.tags}
-                scale={[xScale, yScale]}
-                position={[i * xTotal, 0, 0]}
+                scale={[collapsedScaleX, collapsedScaleY]}
+                //position={[i * xTotal, 0, 0]}
                 index={i}
                 numberOfProjects={projects.length}
               />
