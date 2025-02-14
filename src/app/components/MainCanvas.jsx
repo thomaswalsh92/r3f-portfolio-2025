@@ -11,7 +11,7 @@ import * as THREE from "three";
 export const MainCanvas = () => {
   const ref = useRef();
   return (
-    <div className="w-screen h-screen fixed top-0 left-0">
+    <div className=" mainCanvas">
       <Canvas
         style={{ width: "100%", height: "100%" }}
         gl={{ antialias: false }}
@@ -55,7 +55,6 @@ const Scene = () => {
           // wireframe={true}
         />
       </mesh>
-      <Carousel />
     </>
   );
 };

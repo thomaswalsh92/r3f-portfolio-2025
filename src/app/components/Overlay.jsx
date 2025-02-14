@@ -10,21 +10,23 @@ const h2Font = Inter({ weight: "200", subsets: ["latin"] });
 
 const Overlay = () => {
   return (
-    <div className="overlay-top">
-      <div className="header">
-        <div className="titles">
-          <h1 className={`${h1Font.className} tom`}>TOM WALSH</h1>
-          <h2 className={`${h2Font.className} designer`}>
-            DESIGNER / DEVELOPER
-          </h2>
+    <div className="overlay">
+      <div className="overlay-top">
+        <div className="header">
+          <div className="titles">
+            <h1 className={`${h1Font.className} tom`}>TOM WALSH</h1>
+            <h2 className={`${h2Font.className} designer`}>
+              DESIGNER / DEVELOPER
+            </h2>
+          </div>
+          <div className="nav">
+            <h2 className={`${h2Font.className} nav-item`}>SERVICES</h2>
+            <h2 className={`${h2Font.className} nav-item`}>CONTACT</h2>
+            <h2 className={`${h2Font.className} nav-item`}>ABOUT</h2>
+          </div>
         </div>
-        <div className="nav">
-          <h2 className={`${h2Font.className} nav-item`}>SERVICES</h2>
-          <h2 className={`${h2Font.className} nav-item`}>CONTACT</h2>
-          <h2 className={`${h2Font.className} nav-item`}>ABOUT</h2>
-        </div>
+        <hr className="header-rule" />
       </div>
-      <hr className="header-rule" />
       <div className="overlay-bottom">
         <hr className="footer-rule" />
         <div className="footer">

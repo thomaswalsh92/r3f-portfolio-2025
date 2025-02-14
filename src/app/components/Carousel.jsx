@@ -1,15 +1,15 @@
-import { useState, useRef } from "react";
-import { ScrollControls, Scroll } from "@react-three/drei";
+"use client";
+
+import { useState, useRef, useEffect } from "react";
 import CarouselItem from "./CarouselItem";
-import { useFrame, useThree } from "@react-three/fiber";
-// import {
-//   animate,
-//   motion,
-//   MotionValue,
-//   useMotionValue,
-//   useMotionValueEvent,
-//   useScroll,
-// } from "motion/react";
+import {
+  animate,
+  motion,
+  MotionValue,
+  useMotionValue,
+  useMotionValueEvent,
+  useScroll,
+} from "motion/react";
 
 const projects = [
   {
@@ -42,50 +42,68 @@ const projects = [
 ];
 
 const Carousel = () => {
-  const xGap = 0.05;
-  const collapsedScaleX = 0.5;
-  const collapsedScaleY = 3;
-  const expandedScaleX = 4;
-  const expandedScaleY = 5.4;
-  const collapsedTotalX = xGap + collapsedScaleX;
-  const expandedTotalX = xGap + expandedScaleX;
-  const { width } = useThree((state) => state.viewport);
-  const [focusedItem, setFocusedItem] = useState(0);
+  const scroll = useScroll();
 
-  //first thing we wanna do is make the carousel endless with a central reference position. Endless scroll could be used to cycle the unfocused
-  //carousel items around
+  const [height, setHeight] = useState(0);
+  const [width, setWidth] = useState(0);
 
-  //
+  const [focused, setFocused] = useState(0);
+
+  const ref = useRef(null);
+  useEffect(() => {
+    setHeight(ref.current.clientHeight);
+    setWidth(ref.current.clientWidth);
+    console.log(ref.current);
+  }, []);
+
+  //item
+  const expandedHeight = 475;
+  const expandedWidth = 350;
+  const collapsedHeight = 350;
+  const collapsedWidth = 60;
+  const gap = 30; /*prettier-ignore*/
+
+  //distribution
+  const margin = 128;
+  const range = width - (margin * 2); /*prettier-ignore*/
+  const start = margin;
+  const numVisible = Math.floor(range / (collapsedWidth + gap)); /*prettier-ignore*/
+  const spaceForVisible = (collapsedWidth + gap) * numVisible;
+  const remainder = range - spaceForVisible;
+
+  const calculateTop = (i) => {
+    return (height - collapsedHeight) / 2 /*prettier-ignore*/
+  };
+
+  const calculateLeft = (i) => {
+    const offset = (start + ((collapsedWidth + gap) * i)) - (collapsedWidth / 2) + (remainder / 2) /*prettier-ignore*/
+    return offset;
+  };
+
+  //what we need now is a function that computes
+
   return (
-    <>
-      <ScrollControls
-        horizontal
-        pages={
-          (width - collapsedTotalX + projects.length * collapsedTotalX) / width
+    <div className="carouselContainer" ref={ref}>
+      {[...projects, ...projects, ...projects].map((project, i) => {
+        console.log(i);
+        if (i <= numVisible) {
+          return (
+            <CarouselItem
+              style={{
+                position: "absolute",
+                height: collapsedHeight,
+                width: collapsedWidth,
+                top: calculateTop(i),
+                left: calculateLeft(i),
+                backgroundColor: "red",
+              }}
+              project={project}
+              index={i}
+            />
+          );
         }
-      >
-        <Scroll>
-          {projects.map((project, i) => {
-            return (
-              <CarouselItem
-                key={project.name + i}
-                focusedItem={focusedItem}
-                setFocusedItem={(index) => setFocusedItem(index)}
-                xGap={xGap}
-                collapsedScale={[collapsedScaleX, collapsedScaleY]}
-                expandedScale={[expandedScaleX, expandedScaleY]}
-                // name={project.name}
-                // tags={project.tags}
-                scale={[collapsedScaleX, collapsedScaleY]}
-                //position={[i * xTotal, 0, 0]}
-                index={i}
-                numberOfProjects={projects.length}
-              />
-            );
-          })}
-        </Scroll>
-      </ScrollControls>
-    </>
+      })}
+    </div>
   );
 };
 
