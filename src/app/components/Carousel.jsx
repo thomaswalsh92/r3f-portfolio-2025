@@ -47,12 +47,12 @@ const Carousel = () => {
   const [height, setHeight] = useState(0);
   const [width, setWidth] = useState(0);
 
-  const [focused, setFocused] = useState(0);
+  // const [focused, setFocused] = useState(0);
 
-  const [carouselOffset, setCarouselOffset] = useState(0);
+  // const [carouselOffset, setCarouselOffset] = useState(0);
 
+  // const carouselOuter = useRef(null);
   const carouselOuter = useRef(null);
-  const carouselContainer = useRef(null);
   useEffect(() => {
     setHeight(carouselOuter.current.clientHeight);
     setWidth(carouselOuter.current.clientWidth);
@@ -60,7 +60,7 @@ const Carousel = () => {
 
   //item
   const expandedHeight = 475;
-  const expandedWidth = 350;
+  const expandedWidth = 360;
   const collapsedHeight = 350;
   const collapsedWidth = 60;
   const gap = 30; /*prettier-ignore*/
@@ -68,82 +68,99 @@ const Carousel = () => {
   //distribution
   const margin = 128;
   const range = width - (margin * 2); /*prettier-ignore*/
-  //! how many we can fit into the range
-  let numVisible = Math.floor((range - expandedWidth) / (collapsedWidth + gap)); /*prettier-ignore*/
 
-  //!force into odd number of items there is always a centred item
-  if (numVisible % 2 === 0) {
-    numVisible = numVisible + 1;
+  //calculate how many divs we can fit into the range taking into account
+  //margins
+  let numVisible = 1;
+  let remainingRange = range - expandedWidth;
+  while (remainingRange > (0 + collapsedWidth + gap) /*prettier-ignore*/) {
+    remainingRange = remainingRange - (collapsedWidth + gap);
+    numVisible++;
   }
 
-  const calculateTop = (i) => {
+  //need to force an odd number of divs so that the large focused div is always centred
+  if (numVisible % 2 === 0) {
+    numVisible = numVisible - 1;
+    remainingRange = remainingRange + (collapsedWidth + gap);
+  }
+
+  const start = margin + (remainingRange / 2); /*prettier-ignore*/
+
+  const calculateTop = () => {
     return (height - collapsedHeight) / 2 /*prettier-ignore*/
   };
 
+  const midPoint = Math.floor(numVisible / 2);
+
+  const calculateLeft = (index) => {
+    if (index <= midPoint) {
+      return start + ((collapsedWidth + gap) * index); /*prettier-ignore*/
+    }
+
+    if (index > midPoint) {
+      return start + ((collapsedWidth + gap) * (index - 1)) + gap + expandedWidth; /*prettier-ignore*/
+    }
+  };
+
   const debugGetColor = (i) => {
-    const centrePoint = Math.floor(numVisible / 2);
-    if (i < centrePoint) {
+    if (i < midPoint) {
       return "red";
     }
 
-    if (i === centrePoint) {
+    if (i === midPoint) {
       return "blue";
     }
 
-    if (i > centrePoint) {
+    if (i > midPoint) {
       return "green";
     }
   };
 
-  const handleLeft = () => {
-    setCarouselOffset(carouselOffset - 1);
-  };
+  let repeatedProjects = [];
 
-  const handleRight = () => {
-    setCarouselOffset(carouselOffset + 1);
-  };
-
-  const repeatedProjects = [];
+  for (let i = 0; i < numVisible; i = i + projects.length) {
+    repeatedProjects = repeatedProjects.concat(projects);
+  }
 
   numVisible;
 
   return (
     <div className="carouselOuter" ref={carouselOuter}>
-      {/* <button style={{ marginTop: 256 }} onClick={() => handleLeft()}>
-        LEFT
-      </button>
-      <button
-        style={{ marginTop: 256, marginLeft: 16 }}
-        onClick={() => handleRight()}
-      >
-        RIGHT
-      </button> */}
       <div
-        ref={carouselContainer}
         className="carouselContainer"
         style={{
-          height: 475,
-          display: "grid",
-          gridTemplateColumns: `repeat(${Math.floor(numVisible / 2)}, 60px)
-          350px
-          repeat(${Math.floor(numVisible / 2)}, 60px) `,
-          gridTemplateRows: "60px 355px 60px",
-          gridColumnGap: 30,
-          gridRowGap: 0,
-          marginTop: "auto",
-          marginBottom: "auto",
+          position: "fixed",
+          width: width,
+          height: height,
+          top: 0,
+          left: 0,
         }}
       >
+        <div
+          style={{
+            position: "fixed",
+            height: 32,
+            width: range,
+            top: height / 2,
+            left: margin,
+            background: "purple",
+            opacity: "50%",
+            zIndex: 100,
+          }}
+        >
+          RANGE
+        </div>
         {[...projects, ...projects, ...projects].map((project, index) => {
-          let isFocused = false;
-          if (Math.floor(numVisible / 2) === Math.floor(index)) {
-            isFocused = true;
-          }
           return (
             index < numVisible && (
               <CarouselItem
                 style={{
-                  gridRow: isFocused ? "1 / span 3" : "2 / span 1",
+                  position: "fixed",
+                  top: calculateTop(),
+                  left: calculateLeft(index),
+                  width: index === midPoint ? expandedWidth : collapsedWidth,
+                  height: collapsedHeight,
+                  // gridRow: isFocused ? "1 / span 3" : "2 / span 1",
                   backgroundColor: debugGetColor(index),
                 }}
                 project={project}
