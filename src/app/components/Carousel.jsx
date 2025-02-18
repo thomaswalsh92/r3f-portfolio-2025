@@ -51,11 +51,11 @@ const Carousel = () => {
 
   const [carouselOffset, setCarouselOffset] = useState(0);
 
-  const ref = useRef(null);
+  const carouselOuter = useRef(null);
+  const carouselContainer = useRef(null);
   useEffect(() => {
-    setHeight(ref.current.clientHeight);
-    setWidth(ref.current.clientWidth);
-    console.log(ref.current);
+    setHeight(carouselOuter.current.clientHeight);
+    setWidth(carouselOuter.current.clientWidth);
   }, []);
 
   //item
@@ -68,36 +68,30 @@ const Carousel = () => {
   //distribution
   const margin = 128;
   const range = width - (margin * 2); /*prettier-ignore*/
-  const start = margin;
-  let numVisible = Math.floor(range / (collapsedWidth + gap)); /*prettier-ignore*/
+  //! how many we can fit into the range
+  let numVisible = Math.floor((range - expandedWidth) / (collapsedWidth + gap)); /*prettier-ignore*/
 
-  //force odd number of items
-  if (numVisible % 2 === 1) {
+  //!force into odd number of items there is always a centred item
+  if (numVisible % 2 === 0) {
     numVisible = numVisible + 1;
   }
-
-  const spaceForVisible = (collapsedWidth + gap) * numVisible;
-  const remainder = range - spaceForVisible;
 
   const calculateTop = (i) => {
     return (height - collapsedHeight) / 2 /*prettier-ignore*/
   };
 
-  const calculateLeft = (i) => {
-    return (start + ((collapsedWidth + gap) * i)) - (collapsedWidth / 2) + (remainder / 2) /*prettier-ignore*/
-  };
-
   const debugGetColor = (i) => {
-    const select = i % 3;
-    switch (select) {
-      case 0:
-        return "red";
-      case 1:
-        return "blue";
-      case 2:
-        return "green";
-      default:
-        "white";
+    const centrePoint = Math.floor(numVisible / 2);
+    if (i < centrePoint) {
+      return "red";
+    }
+
+    if (i === centrePoint) {
+      return "blue";
+    }
+
+    if (i > centrePoint) {
+      return "green";
     }
   };
 
@@ -109,11 +103,13 @@ const Carousel = () => {
     setCarouselOffset(carouselOffset + 1);
   };
 
-  const focusedItem = numVisible / 2;
+  const repeatedProjects = [];
+
+  numVisible;
 
   return (
-    <div className="carouselContainer" ref={ref}>
-      <button style={{ marginTop: 256 }} onClick={() => handleLeft()}>
+    <div className="carouselOuter" ref={carouselOuter}>
+      {/* <button style={{ marginTop: 256 }} onClick={() => handleLeft()}>
         LEFT
       </button>
       <button
@@ -121,25 +117,42 @@ const Carousel = () => {
         onClick={() => handleRight()}
       >
         RIGHT
-      </button>
-      {[...projects, ...projects, ...projects].map((project, i) => {
-        if (i <= numVisible) {
+      </button> */}
+      <div
+        ref={carouselContainer}
+        className="carouselContainer"
+        style={{
+          height: 475,
+          display: "grid",
+          gridTemplateColumns: `repeat(${Math.floor(numVisible / 2)}, 60px)
+          350px
+          repeat(${Math.floor(numVisible / 2)}, 60px) `,
+          gridTemplateRows: "60px 355px 60px",
+          gridColumnGap: 30,
+          gridRowGap: 0,
+          marginTop: "auto",
+          marginBottom: "auto",
+        }}
+      >
+        {[...projects, ...projects, ...projects].map((project, index) => {
+          let isFocused = false;
+          if (Math.floor(numVisible / 2) === Math.floor(index)) {
+            isFocused = true;
+          }
           return (
-            <CarouselItem
-              style={{
-                position: "absolute",
-                height: collapsedHeight,
-                width: focusedItem === i ? collapsedWidth * 2 : collapsedWidth,
-                top: calculateTop(i),
-                left: calculateLeft(i),
-                backgroundColor: debugGetColor(i),
-              }}
-              project={project}
-              index={i}
-            />
+            index < numVisible && (
+              <CarouselItem
+                style={{
+                  gridRow: isFocused ? "1 / span 3" : "2 / span 1",
+                  backgroundColor: debugGetColor(index),
+                }}
+                project={project}
+                index={index}
+              />
+            )
           );
-        }
-      })}
+        })}
+      </div>
     </div>
   );
 };

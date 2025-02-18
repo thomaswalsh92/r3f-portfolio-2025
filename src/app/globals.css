@@ -129,10 +129,17 @@ h2 {
 
 /* CAROUSEL CONTAINER */
 
-.carouselContainer {
+.carouselOuter {
   height: 100%;
   width: 100vw;
   position: fixed;
+  display: flex;
+  align-items: centre;
+  justify-content: center;
   top: 0;
   left: 0;
 }
+
+/* .carouselContainer {
+
+} */
