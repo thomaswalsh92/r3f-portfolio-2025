@@ -47,6 +47,8 @@ const Carousel = () => {
   const [height, setHeight] = useState(0);
   const [width, setWidth] = useState(0);
 
+  const [firstProject, setFirstProject] = useState(0);
+
   // const [focused, setFocused] = useState(0);
 
   // const [carouselOffset, setCarouselOffset] = useState(0);
@@ -73,7 +75,7 @@ const Carousel = () => {
   //margins
   let numVisible = 1;
   let remainingRange = range - expandedWidth;
-  while (remainingRange > (0 + collapsedWidth + gap) /*prettier-ignore*/) {
+  while (remainingRange > (collapsedWidth + gap) /*prettier-ignore*/) {
     remainingRange = remainingRange - (collapsedWidth + gap);
     numVisible++;
   }
@@ -86,11 +88,14 @@ const Carousel = () => {
 
   const start = margin + (remainingRange / 2); /*prettier-ignore*/
 
-  const calculateTop = () => {
+  const midPoint = Math.floor(numVisible / 2);
+
+  const calculateTop = (index) => {
+    if (index === midPoint) {
+      return (height - expandedHeight) / 2 /*prettier-ignore*/
+    }
     return (height - collapsedHeight) / 2 /*prettier-ignore*/
   };
-
-  const midPoint = Math.floor(numVisible / 2);
 
   const calculateLeft = (index) => {
     if (index <= midPoint) {
@@ -116,13 +121,27 @@ const Carousel = () => {
     }
   };
 
-  let repeatedProjects = [];
+  const handleBack = () => {
+    let newFirst = firstProject - 1;
+    if (newFirst < 0) {
+      newFirst = projects.length - 1;
+    }
+    setFirstProject(newFirst);
+  };
 
-  for (let i = 0; i < numVisible; i = i + projects.length) {
-    repeatedProjects = repeatedProjects.concat(projects);
+  const handleForward = () => {
+    let newFirst = firstProject + 1;
+    if (newFirst > projects.length) {
+      newFirst = 0;
+    }
+    setFirstProject(newFirst);
+  };
+
+  let carouselProjects = [];
+
+  for (let i = 0; i < numVisible; i++) {
+    carouselProjects.push(projects[(firstProject + i) % projects.length]) /*prettier-ignore*/
   }
-
-  numVisible;
 
   return (
     <div className="carouselOuter" ref={carouselOuter}>
@@ -139,35 +158,37 @@ const Carousel = () => {
         <div
           style={{
             position: "fixed",
-            height: 32,
-            width: range,
-            top: height / 2,
-            left: margin,
-            background: "purple",
-            opacity: "50%",
-            zIndex: 100,
+            top: 128,
+            left: width / 2 - 32,
+            width: 64,
           }}
         >
-          RANGE
+          <button style={{ margin: 16 }} onClick={handleBack}>
+            BACK
+          </button>
+          <button style={{ margin: 16 }} onClick={handleForward}>
+            FORWARD
+          </button>
+          <span>{firstProject}</span>
         </div>
-        {[...projects, ...projects, ...projects].map((project, index) => {
+        {carouselProjects.map((project, index) => {
           return (
-            index < numVisible && (
-              <CarouselItem
-                style={{
-                  position: "fixed",
-                  top: calculateTop(),
-                  left: calculateLeft(index),
-                  width: index === midPoint ? expandedWidth : collapsedWidth,
-                  height: collapsedHeight,
-                  // gridRow: isFocused ? "1 / span 3" : "2 / span 1",
-                  backgroundColor: debugGetColor(index),
-                }}
-                project={project}
-                index={index}
-              />
-            )
+            // index < numVisible && (
+            <CarouselItem
+              style={{
+                position: "fixed",
+                top: calculateTop(index),
+                left: calculateLeft(index),
+                width: index === midPoint ? expandedWidth : collapsedWidth,
+                height: index === midPoint ? expandedHeight : collapsedHeight,
+                // gridRow: isFocused ? "1 / span 3" : "2 / span 1",
+                backgroundColor: debugGetColor(index),
+              }}
+              project={project}
+              index={index}
+            />
           );
+          // );
         })}
       </div>
     </div>
